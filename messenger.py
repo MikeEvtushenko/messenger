@@ -5,9 +5,10 @@ from datetime import datetime
 
 
 class ExampleApp(QtWidgets.QMainWindow, clientui.Ui_MainWindow):
-    def __init__(self):
+    def __init__(self, host="http://127.0.0.1:5000"):
         super().__init__()
         self.setupUi(self)
+        self.host = host
         self.pushButton.pressed.connect(self.send_message)
         self.after = 0
         self.timer = QtCore.QTimer()
@@ -25,7 +26,7 @@ class ExampleApp(QtWidgets.QMainWindow, clientui.Ui_MainWindow):
     def get_messages(self):
         try:
             response = requests.get(
-                "http://127.0.0.1:5000/messages",
+                self.host + "/messages",
                 params={"after": self.after}
             )
         except:
@@ -43,7 +44,7 @@ class ExampleApp(QtWidgets.QMainWindow, clientui.Ui_MainWindow):
         text = self.textEdit.toPlainText()
         try:
             response = requests.post(
-                "http://127.0.0.1:5000/send",
+                self.host + "/send",
                 json={"name": name, "text": text}
             )
         except:
@@ -60,7 +61,8 @@ class ExampleApp(QtWidgets.QMainWindow, clientui.Ui_MainWindow):
 
 
 app = QtWidgets.QApplication([])
-window = ExampleApp()
+#!!! редактировать window в зависимости от адреса сервера, к которому подключаемся!!!
+window = ExampleApp("http://802a6c622e4a.ngrok.io")
 window.show()
 app.exec()
 
